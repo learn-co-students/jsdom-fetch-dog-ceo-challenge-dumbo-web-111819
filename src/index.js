@@ -25,22 +25,46 @@ function imgCreator(){
         newImgTag = document.createElement("img")
         newImgTag.src = element
         // newImgTag.alt= "Test"
-        imgDiv.append(newImgTag)
+        imgDiv.append(newImgTag)//'list' of dog image links appended to imgDiv container
         })
     })
 }
 function breedLister (){
     let ulTag = document.querySelector("#dog-breeds")
+    let dpDown=document.querySelector('#breed-dropdown')
+    let select
+    
+    // console.log(dpDown)
     fetch('https://dog.ceo/api/breeds/list/all')
     .then(resp => resp.json())
     .then(obj => {
-        Object.keys(obj.message).forEach(function(element){
-        newLi = document.createElement("li")
-        newLi.innerText = element
-        ulTag.append(newLi)
+        const filteredArray=(array,select=undefined) => {
+            console.log(select)
+            return select===undefined || select==="" ? array : array.filter(element=>element[0].toLowerCase()===select.toLowerCase())
+        }
+        let breedArray=Object.keys(obj.message)
+        filteredArray(breedArray).forEach(element=>{
+            let newLi = document.createElement("li")
+            newLi.innerText = element
+            ulTag.append(newLi)
         })
+        dpDown.addEventListener('change',(e) => {
+            ulTag.innerHTML=""
+            select=e.target.value           
+            // console.log('select',select)
+            breedArray=Object.keys(obj.message)
+            filteredArray(breedArray,select).forEach(element=>{
+                newLi = document.createElement("li")
+                newLi.innerText = element
+                ulTag.append(newLi)
+            })
+        })
+  
+
+      
     })
-    ulTag.addEventListener("click",function(e){
+
+    ulTag.addEventListener("click",(e)=>{ //event listener on the parent 'ul'
         if(e.target.tagName === "LI"){
             if(e.target.style.color === "green"){  
                     e.target.style.color = "red"
@@ -50,7 +74,9 @@ function breedLister (){
                 }
             }
     })
+ 
+
 }
-// obj.messages
+
 
 
